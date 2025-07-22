@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="https://www.pingan.com/favicon.ico" type="image/x-icon">
+    <title>谢金英·中国平安投资专家</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .content-display {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            margin: 40px auto;
+            min-height: 400px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .sidebar h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #ea5a26;
+            /* 主色橘红 */
+            padding-bottom: 8px;
+        }
+
+        .sidebar button {
+            background-color: #ea5a26;
+            /* 主色橘红 */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 0;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .sidebar button:hover {
+            background-color: #c6491f;
+            /* 深一点橘红 */
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+            overflow-y: auto;
+            max-height: 475px;
+            border-top: 1px solid #ddd;
+        }
+
+        .sidebar ul li {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 15px;
+            transition: background-color 0.25s, color 0.25s;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #ffe6de;
+            /* 很浅的橘红背景 */
+            color: #b54217;
+            /* 深橘红字体 */
+        }
+
+        .sidebar ul li.active {
+            background-color: #ea5a26;
+            /* 主色橘红 */
+            color: white;
+            font-weight: 600;
+        }
+
+        .main-display {
+            flex-grow: 1;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgb(0 0 0 / 0.1);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 400px;
+            overflow-y: auto;
+        }
+
+        .main-display img {
+            max-width: 100%;
+            max-height: 600px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgb(0 0 0 / 0.15);
+            object-fit: contain;
+            user-select: none;
+            transition: transform 0.3s ease;
+        }
+
+        .main-display img:hover {
+            transform: scale(1.0);
+        }
+
+        /* 响应式调整 */
+        @media screen and (max-width: 768px) {
+            .content-display {
+                flex-direction: column;
+                max-width: 95%;
+                padding: 10px;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: none;
+                margin-bottom: 20px;
+            }
+
+            .sidebar ul {
+                max-height: 475px;
+            }
+
+            .main-display {
+                min-height: 300px;
+            }
+        }
+
+
+        .intro-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+        }
+
+        .photo-frame {
+            flex-shrink: 0;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(234, 90, 38, 0.3);
+            border: 5px solid #ea5a26;
+            /* 主色调边框 */
+            margin-bottom: 16px;
+        }
+
+        .intro-text {
+            font-size: 20px;
+            line-height: 1;
+            color: #333;
+            min-width: 280px;
+            z-index: -1;
+        }
+
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+
+        .data-section {
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .data-buttons {
+            margin-top: 20px;
+        }
+
+        .data-buttons button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .content-display {
+            margin-top: 40px;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 200px;
+            border-right: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .sidebar h3 {
+            margin-top: 0;
+        }
+
+        .sidebar ul {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+            cursor: pointer;
+            color: blue;
+        }
+
+        .main-display {
+            flex: 1;
+            padding: 10px;
+            height: 600px;
+        }
+
+        .main-display img {
+            width: 100%;
+            height: 600px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .intro-section {
+            display: flex;
+            align-items: center;
+            height: calc(100vh - 200px);
+            max-width: 900px;
+            margin: 60px auto 40px;
+            padding: 0 16px;
+            flex-wrap: wrap;
+        }
+
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .intro-text {
+            position: relative;
+            top: 140px;
+            flex: 1;
+            min-width: 240px;
+            font-size: 18px;
+            color: #333;
+            user-select: text;
+        }
+
+        .data-section {
+            max-width: 900px;
+            margin: 0 auto 60px;
+            padding: 0 16px;
+            text-align: center;
+        }
+
+        .data-section h2 {
+            font-weight: 600;
+            font-size: 24px;
+            color: #ea5a26;
+            /* 主色调 */
+            margin-bottom: 16px;
+        }
+
+        .data-section #info-data {
+            font-weight: 700;
+            color: #555;
+        }
+
+        .data-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .data-buttons button {
+            background-color: #ea5a26;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(234, 90, 38, 0.4);
+            transition: background-color 0.3s ease;
+        }
+
+        .data-buttons button:hover {
+            background-color: #c6491f;
+        }
+
+        /* 响应式手机适配 */
+        @media (max-width: 600px) {
+            .intro-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .intro-text {
+                text-align: center;
+            }
+
+            .data-buttons {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .data-buttons button {
+                width: 100%;
+            }
+        }
+        .background-section {
+            position: absolute;
+            z-index: -1;
+            width: 100%;
+            top: 200px;
+  height: 300px;
+  background: linear-gradient(135deg, #ea5a26 0%, #ff8c42 100%);
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  color: white;
+  text-align: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.main-title {
+  font-size: 3.5rem; /* 大字体 */
+  font-weight: 900;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+  user-select: none;
+  line-height: 1.2;
+}
+
+    </style>
+</head>
+
+<body>
+
+    <div class="background-section">
+        <h1 class="main-title">保险的真谛：保险=爱+责任+专业</h1>
+      </div>
+    
+
+    <div class="intro-section">
+        <div class="photo-frame">
+            <img src="./logo.jpg" alt="头像">
+        </div>
+        <div class="intro-text">
+            <p>世界TOP20企业，保险巨头，领航计划主理，一个专注财富·健康·未来的投资人</p>
+        </div>
+    </div>
+
+    <div class="data-section">
+        <!-- <h2>基础信息：<span id="info-data">加载中...</span></h2> -->
+        <div class="data-buttons">
+            <button onclick="scrollToContent('images')">变化的金融</button>
+            <button onclick="scrollToContent('pdf')">国家金融监管局发稿</button>
+        </div>
+    </div>
+
+    <div class="content-display" id="images">
+        <div class="sidebar">
+            <h3>图片目录</h3>
+            <button onclick="openMultiView()">多图对比</button>
+            <ul id="image-nav"></ul>
+        </div>
+        <div class="main-display" id="image-display"></div>
+    </div>
+
+    <div class="content-display" id="pdf">
+        <iframe id="pdf-viewer" src="./pdf/01.pdf"></iframe>
+    </div>
+
+    <script>
+        const mockData = {
+            info: "这是一条来自接口的动态信息",
+            images: Array.from({ length: 10 }, (_, i) => `./images/${String(i + 1).padStart(2, '0')}.jpg`),
+            pdfs: ["./pdf/01.pdf"]
+        };
+
+        // document.getElementById('info-data').innerText = mockData.info;
+
+        const imageNav = document.getElementById('image-nav');
+        const imageDisplay = document.getElementById('image-display');
+        const images = mockData.images; // 假设是图片路径数组
+        imageNav.innerHTML = ''; // 清空目录，确保干净
+
+        images.forEach((src, index) => {
+            const name = `图片 ${String(index + 1).padStart(2, '0')}`;
+            const li = document.createElement('li');
+            li.innerText = name;
+
+            li.addEventListener('click', () => {
+                // 取消所有 li 的 active
+                const allLis = imageNav.querySelectorAll('li');
+                allLis.forEach(item => item.classList.remove('active'));
+
+                // 当前 li 激活
+                li.classList.add('active');
+
+                // 展示对应图片
+                imageDisplay.innerHTML = `<img src="${src}" alt="${name}">`;
+            });
+
+            imageNav.appendChild(li);
+        });
+
+        // 默认选中第一张
+        const firstLi = imageNav.querySelector('li');
+        if (firstLi) {
+            firstLi.classList.add('active');
+            imageDisplay.innerHTML = `<img src="${images[0]}" alt="图片 01">`;
+        }
+        function scrollToContent(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openMultiView() {
+            const iframe = document.createElement('iframe');
+            iframe.src = './compare.html';
+            document.getElementById('image-display').innerHTML = '';
+            document.getElementById('image-display').appendChild(iframe);
+        }
+    </script>
+</body>
+
+</html>
