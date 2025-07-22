@@ -164,6 +164,10 @@
   const slideCount = 10;
   const slideWidth = window.innerWidth;
 
+  window.addEventListener('resize', () => {
+    slideWidth = window.innerWidth;
+  })
+
   // 保存每个slide对应的canvas和ctx
   const canvases = [];
 
