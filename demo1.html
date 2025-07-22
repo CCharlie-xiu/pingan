@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>全屏横向滑动图片展示带涂鸦</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+  }
+  .toolbar {
+    height: 48px;
+    background: #111;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    user-select: none;
+  }
+  .toolbar button {
+    background: #ea5a26;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-left: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+  }
+  .slider-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .slider {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  .slider::-webkit-scrollbar {
+    display: none;
+  }
+  .slide {
+    flex: 0 0 100vw;
+    height: 100vh;
+    scroll-snap-align: start;
+    position: relative;
+    user-select: none;
+  }
+  .slide img {
+    width: 100%;
+    height: 90%;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+    background: #000;
+    display: block;
+  }
+  canvas.doodle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90%;
+    cursor: crosshair;
+    touch-action: none; /* 防止触摸设备滚动冲突 */
+  }
+  /* 左右箭头按钮 */
+  .arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    color: rgba(255,255,255,0.7);
+    background: rgba(0,0,0,0.3);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    z-index: 10;
+    transition: background 0.3s;
+  }
+  .arrow:hover {
+    background: rgba(0,0,0,0.6);
+  }
+  .arrow.left {
+    left: 20px;
+  }
+  .arrow.right {
+    right: 20px;
+  }
+
+  /* 缩略图条 */
+  .thumbnails {
+    margin: auto;
+    display: flex;
+    overflow-x: auto;
+    padding: 8px 0;
+    background: #111;
+    border-top: 1px solid #444;
+  }
+  .thumbnails::-webkit-scrollbar {
+    height: 8px;
+  }
+  .thumbnails::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+  }
+  .thumbnail {
+    flex: 0 0 auto;
+    width: 64px;
+    height: 35px;
+    margin: 0 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0.7;
+    border: 2px solid transparent;
+    transition: opacity 0.3s, border-color 0.3s;
+  }
+  .thumbnail:hover {
+    opacity: 1;
+  }
+  .thumbnail.active {
+    border-color: #ea5a26;
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div>涂鸦模式</div>
+  <button id="clearDoodleBtn">清空涂鸦</button>
+</div>
+
+<div class="slider-container">
+  <div class="slider" id="slider">
+    <!-- 大图动态生成 -->
+  </div>
+
+  <div class="arrow left" id="arrowLeft">&#8592;</div>
+  <div class="arrow right" id="arrowRight">&#8594;</div>
+</div>
+
+<div class="thumbnails" id="thumbnails">
+  <!-- 缩略图动态生成 -->
+</div>
+
+<script>
+  const slider = document.getElementById('slider');
+  const thumbnails = document.getElementById('thumbnails');
+  const clearBtn = document.getElementById('clearDoodleBtn');
+  const slideCount = 10;
+  const slideWidth = window.innerWidth;
+
+  // 保存每个slide对应的canvas和ctx
+  const canvases = [];
+
+  function setActiveThumbnail(index) {
+    const thumbs = thumbnails.querySelectorAll('.thumbnail');
+    thumbs.forEach((thumb, i) => {
+      thumb.classList.toggle('active', i === index);
+    });
+  }
+
+  // 动态创建大图和缩略图
+  for(let i = 1; i <= slideCount; i++) {
+    const imgSrc = `./images/${String(i).padStart(2, '0')}.jpg`;
+
+    // 大图slide
+    const slide = document.createElement('div');
+    slide.className = 'slide';
+
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.alt = `图片 ${String(i).padStart(2, '0')}`;
+    img.draggable = false;
+    slide.appendChild(img);
+
+    // 创建canvas叠加在图片上，用于涂鸦
+    const canvas = document.createElement('canvas');
+    canvas.className = 'doodle';
+    slide.appendChild(canvas);
+
+    slider.appendChild(slide);
+
+    canvases.push({canvas, ctx: canvas.getContext('2d')});
+  }
+
+  setActiveThumbnail(0); // 默认高亮第一个缩略图
+
+  // 缩略图生成
+  for(let i = 1; i <= slideCount; i++) {
+    const imgSrc = `./images/${String(i).padStart(2, '0')}.jpg`;
+    const thumb = document.createElement('img');
+    thumb.className = 'thumbnail';
+    thumb.src = imgSrc;
+    thumb.alt = `缩略图 ${String(i).padStart(2, '0')}`;
+    thumb.addEventListener('click', () => {
+      slider.scrollTo({ left: slideWidth * (i - 1), behavior: 'smooth' });
+      setActiveThumbnail(i - 1);
+    });
+    thumbnails.appendChild(thumb);
+  }
+
+  // 涂鸦绘制逻辑
+  canvases.forEach(({canvas, ctx}) => {
+    let drawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    // 设置画笔样式
+    ctx.strokeStyle = '#ff8c42';
+    ctx.lineWidth = 30;
+    ctx.lineCap = 'round';
+
+    function resizeCanvas() {
+      // 使canvas大小和图片显示尺寸一致
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * devicePixelRatio;
+      canvas.height = rect.height * devicePixelRatio;
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function startDrawing(e) {
+      drawing = true;
+      const rect = canvas.getBoundingClientRect();
+      lastX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      lastY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      ctx.strokeStyle = '#ff8c42';
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+
+      lastX = x;
+      lastY = y;
+    }
+
+    function stopDrawing() {
+      drawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('touchstart', startDrawing);
+
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('touchmove', draw);
+
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout',stopDrawing);
+
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchcancel', stopDrawing);
+  });
+
+  // 清空当前激活slide的涂鸦
+  function clearCurrentDoodle() {
+    const index = Math.round(slider.scrollLeft / slideWidth);
+    const {canvas, ctx} = canvases[index];
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  clearBtn.addEventListener('click', clearCurrentDoodle);
+
+  // 左右箭头事件
+  document.getElementById('arrowLeft').addEventListener('click', () => {
+    slider.scrollBy({ left: -slideWidth, behavior: 'smooth' });
+  });
+  document.getElementById('arrowRight').addEventListener('click', () => {
+    slider.scrollBy({ left: slideWidth, behavior: 'smooth' });
+  });
+
+  // 滚动监听，动态设置缩略图高亮
+  slider.addEventListener('scroll', () => {
+    const index = Math.round(slider.scrollLeft / slideWidth);
+    setActiveThumbnail(index);
+  });
+
+  // 窗口大小变化时更新canvas大小
+  window.addEventListener('resize', () => {
+    canvases.forEach(({canvas, ctx}) => {
+      // 重新设置canvas大小（保持dpi缩放）
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * devicePixelRatio;
+      canvas.height = rect.height * devicePixelRatio;
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+    });
+  });
+</script>
+
+</body>
+</html>
