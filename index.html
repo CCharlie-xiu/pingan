@@ -417,7 +417,7 @@
     <div class="content-display" id="images">
         <div class="sidebar">
             <h3>图片目录</h3>
-            <button onclick="openMultiView()">多图对比</button>
+            <button onclick="openMultiView()">演示模式</button>
             <ul id="image-nav"></ul>
         </div>
         <div class="main-display" id="image-display"></div>
@@ -482,10 +482,7 @@
         }
 
         function openMultiView() {
-            const iframe = document.createElement('iframe');
-            iframe.src = './compare.html';
-            document.getElementById('image-display').innerHTML = '';
-            document.getElementById('image-display').appendChild(iframe);
+            window.open('./demo1.html')
         }
     </script>
 </body>
