@@ -245,7 +245,7 @@
         .intro-section {
             display: flex;
             align-items: center;
-            height: calc(100vh - 200px);
+            height: calc(100vh - 160px);
             max-width: 900px;
             margin: 60px auto 40px;
             padding: 0 16px;
@@ -261,7 +261,7 @@
 
         .intro-text {
             position: relative;
-            top: 140px;
+            top: 90px;
             flex: 1;
             min-width: 240px;
             font-size: 18px;
@@ -337,7 +337,7 @@
             z-index: -1;
             width: 100%;
             top: 200px;
-  height: 300px;
+  height: 260px;
   background: linear-gradient(135deg, #ea5a26 0%, #ff8c42 100%);
   display: flex;
   justify-content: center;
@@ -357,6 +357,16 @@
   line-height: 1.2;
 }
 
+#image-nav li img.thumbnail {
+  width: 160px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+#image-nav li.active img.thumbnail {
+  border: 2px solid #ea5a26;
+}
     </style>
 </head>
 
@@ -412,24 +422,30 @@
         imageNav.innerHTML = ''; // 清空目录，确保干净
 
         images.forEach((src, index) => {
-            const name = `图片 ${String(index + 1).padStart(2, '0')}`;
-            const li = document.createElement('li');
-            li.innerText = name;
+    const li = document.createElement('li');
+    const thumbnail = document.createElement('img');
 
-            li.addEventListener('click', () => {
-                // 取消所有 li 的 active
-                const allLis = imageNav.querySelectorAll('li');
-                allLis.forEach(item => item.classList.remove('active'));
+    thumbnail.src = src;
+    thumbnail.alt = `图片 ${String(index + 1).padStart(2, '0')}`;
+    thumbnail.classList.add('thumbnail');
 
-                // 当前 li 激活
-                li.classList.add('active');
+    li.appendChild(thumbnail);
 
-                // 展示对应图片
-                imageDisplay.innerHTML = `<img src="${src}" alt="${name}">`;
-            });
+    li.addEventListener('click', () => {
+        // 取消所有 li 的 active 状态
+        const allLis = imageNav.querySelectorAll('li');
+        allLis.forEach(item => item.classList.remove('active'));
 
-            imageNav.appendChild(li);
-        });
+        // 当前 li 激活
+        li.classList.add('active');
+
+        // 展示对应图片
+        imageDisplay.innerHTML = `<img src="${src}" alt="${thumbnail.alt}">`;
+    });
+
+    imageNav.appendChild(li);
+});
+
 
         // 默认选中第一张
         const firstLi = imageNav.querySelector('li');
